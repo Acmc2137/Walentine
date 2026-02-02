@@ -16,7 +16,6 @@ body{
     overflow:hidden;
 }
 
-/* GŁÓWNY BOX */
 .container{
     width:750px;
     height:520px;
@@ -49,6 +48,7 @@ button{
     cursor:pointer;
     white-space:nowrap;
     z-index:3;
+    transition: left 0.25s ease, top 0.25s ease;
 }
 
 #yes{
@@ -73,25 +73,16 @@ button{
     z-index:3;
 }
 
-.love-box h2{
-    color:#e91e63;
-    margin-bottom:15px;
-}
+.love-box h2{color:#e91e63;margin-bottom:15px;}
+.love-box img{max-width:240px;border-radius:20px;}
 
-.love-box img{
-    max-width:240px;
-    border-radius:20px;
-}
-
-/* PNG */
 .flying{
     position:absolute;
     width:120px;
     pointer-events:none;
-    z-index:1; /* ZA TEKSTEM */
+    z-index:1;
 }
 
-/* SERDUSZKA */
 .heart{
     position:fixed;
     top:-30px;
@@ -101,10 +92,7 @@ button{
     pointer-events:none;
     z-index:0;
 }
-
-@keyframes fall{
-    to{transform:translateY(110vh);}
-}
+@keyframes fall{to{transform:translateY(110vh);}}
 </style>
 </head>
 
@@ -140,19 +128,46 @@ function createHeart(){
 }
 setInterval(createHeart,350);
 
-/* PRZYCISK NIE */
+/* PRZYCISK NIE – PŁYNNY RUCH + COOLDOWN */
 const noBtn=document.getElementById("no");
 const box=document.getElementById("buttonsBox");
-const texts=["nie","serio?","ej 😳","no weź","💔"];
-let step=0;
 
-noBtn.addEventListener("mouseenter",()=>{
-    const maxX=box.clientWidth-noBtn.offsetWidth;
-    const maxY=box.clientHeight-noBtn.offsetHeight;
-    noBtn.style.left=Math.random()*maxX+"px";
-    noBtn.style.top=Math.random()*maxY+"px";
-    if(step<texts.length-1) step++;
-    noBtn.textContent=texts[step];
+const texts=["nie","serio?","ej 😳","no weź","💔"];
+let textIndex=0;
+let lastTextChange=0;
+
+noBtn.addEventListener("mousemove",(e)=>{
+    const now=Date.now();
+
+    const boxRect=box.getBoundingClientRect();
+    const btnRect=noBtn.getBoundingClientRect();
+
+    const btnX=btnRect.left+btnRect.width/2;
+    const btnY=btnRect.top+btnRect.height/2;
+
+    const dx=btnX-e.clientX;
+    const dy=btnY-e.clientY;
+    const dist=Math.sqrt(dx*dx+dy*dy);
+
+    if(dist<120){
+        const move=40;
+        const angle=Math.atan2(dy,dx);
+
+        let newLeft=(btnRect.left-boxRect.left)+Math.cos(angle)*move;
+        let newTop =(btnRect.top -boxRect.top )+Math.sin(angle)*move;
+
+        newLeft=Math.max(0,Math.min(box.clientWidth-btnRect.width,newLeft));
+        newTop =Math.max(0,Math.min(box.clientHeight-btnRect.height,newTop));
+
+        noBtn.style.left=newLeft+"px";
+        noBtn.style.top =newTop +"px";
+
+        if(now-lastTextChange>600 && textIndex<texts.length-1){
+            textIndex++;
+            noBtn.textContent=texts[textIndex];
+            lastTextChange=now;
+        }
+    }
 });
 
 /* TAK */
@@ -168,35 +183,30 @@ yesBtn.addEventListener("click",()=>{
     startFlyingPNG();
 });
 
-/* PNG – WLOT Z BOKÓW */
+/* PNG */
 function startFlyingPNG(){
     const pngs=[];
-    const count=4;
-
-    for(let i=0;i<count;i++){
+    for(let i=0;i<4;i++){
         const img=document.createElement("img");
         img.src="meme1.png";
         img.className="flying";
         container.appendChild(img);
 
-        const fromLeft=i%2===0;
+        const left=i%2===0;
         pngs.push({
             el:img,
-            x:fromLeft?-130:container.clientWidth+10,
+            x:left?-130:container.clientWidth+10,
             y:Math.random()*(container.clientHeight-120),
-            vx:fromLeft?3:-3,
-            vy:(Math.random()*2+1.5)*(Math.random()<0.5?-1:1)
+            vx:left?3:-3,
+            vy:(Math.random()*2+1)*(Math.random()<0.5?-1:1)
         });
     }
 
     function animate(){
         pngs.forEach(p=>{
-            p.x+=p.vx;
-            p.y+=p.vy;
-
+            p.x+=p.vx; p.y+=p.vy;
             if(p.x<=0||p.x>=container.clientWidth-120) p.vx*=-1;
             if(p.y<=0||p.y>=container.clientHeight-120) p.vy*=-1;
-
             p.el.style.left=p.x+"px";
             p.el.style.top=p.y+"px";
         });
