@@ -176,12 +176,11 @@ yesBtn.addEventListener("click",()=>{
     startFlyingPNG();
 });
 
-/* PNG – START LOSOWO POZA BOXEM, ODBICIE OD BOXA */
+/* PNG – START POZA BOXEM, odbicia z losowym przyspieszeniem */
 function startFlyingPNG(){
     const pngs=[];
     const count=8;
     const size=180;
-
     const boxRect=container.getBoundingClientRect();
 
     for(let i=0;i<count;i++){
@@ -190,7 +189,6 @@ function startFlyingPNG(){
         img.className="flying";
         document.body.appendChild(img);
 
-        // START POZA BOXEM
         let x, y;
         do {
             x=Math.random()*(window.innerWidth-size);
@@ -218,8 +216,8 @@ function startFlyingPNG(){
             p.y+=p.vy;
 
             // odbicie od ekranu
-            if(p.x<=0||p.x>=window.innerWidth-size) p.vx*=-1;
-            if(p.y<=0||p.y>=window.innerHeight-size) p.vy*=-1;
+            if(p.x<=0||p.x>=window.innerWidth-size){ p.vx*=-1; p.vx+=Math.random()*0.5-0.25; }
+            if(p.y<=0||p.y>=window.innerHeight-size){ p.vy*=-1; p.vy+=Math.random()*0.5-0.25; }
 
             // odbicie od boxa
             if(
@@ -228,11 +226,11 @@ function startFlyingPNG(){
                 p.y+size>boxRect.top &&
                 p.y<boxRect.bottom
             ){
-                // proste odbicie
-                if(p.vx>0 && p.x<boxRect.left) p.vx*=-1;
-                else if(p.vx<0 && p.x+size>boxRect.right) p.vx*=-1;
-                if(p.vy>0 && p.y<boxRect.top) p.vy*=-1;
-                else if(p.vy<0 && p.y+size>boxRect.bottom) p.vy*=-1;
+                p.vx*=-1;
+                p.vy*=-1;
+                // lekki losowy impuls, żeby nie wpaść w narożnik
+                p.vx += Math.random()*0.5-0.25;
+                p.vy += Math.random()*0.5-0.25;
 
                 // minimalny przesuw w bezpieczne miejsce
                 if(p.x+size>boxRect.left && p.x<boxRect.right)
