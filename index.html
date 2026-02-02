@@ -15,6 +15,8 @@ body {
     font-family: Arial, sans-serif;
     overflow: hidden;
 }
+
+/* Duży kontener – obszar przycisku "nie" */
 .container {
     width: 95%;
     max-width: 600px;
@@ -29,12 +31,51 @@ body {
     justify-content: flex-start;
     align-items: center;
 }
-h1 { font-size: 28px; color: #c2185b; margin-bottom: 30px; }
-.big-love { display: none; font-size: 42px; color: #e91e63; font-weight: bold; margin-bottom: 20px; }
-.love-photo { display: none; position: relative; justify-content: center; align-items: center; margin-bottom: 20px; }
-.love-photo img { border-radius: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.25); }
-#mainPhoto { height: 250px; }
-.buttons { position: relative; width: 100%; height: 250px; margin-top: 20px; }
+
+/* Napis */
+h1 {
+    font-size: 28px;
+    color: #c2185b;
+    margin-bottom: 30px;
+}
+
+/* Drugi kontener – pokazuje się po kliknięciu TAK */
+.big-love-container {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: #fff0f5;
+    border-radius: 25px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+/* Napis w drugim kontenerze */
+.big-love {
+    font-size: 42px;
+    color: #e91e63;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+/* Zdjęcie w drugim kontenerze */
+.love-photo img {
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+    max-width: 100%;
+    height: auto;
+}
+
+/* Obszar przycisków */
+.buttons {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    margin-top: 20px;
+}
+
+/* Przyciski */
 button {
     font-size: 22px;
     padding: 15px 25px;
@@ -46,21 +87,31 @@ button {
     position: absolute;
 }
 #yes { background-color: #ff5c8a; color: white; left:50%; transform:translateX(-50%);}
-#no { background-color: #ddd; color: black; left:50%; top:80px; transform:translateX(-50%);}
+#no { background-color: #ddd; color: black; left:50%; top:80px;}
+
+/* Animacje */
 @keyframes pulse {0%{transform:scale(1);}50%{transform:scale(1.2);}100%{transform:scale(1);} }
 .pulse { animation: pulse 0.6s ease infinite; }
+
 .heart { position: fixed; top: -30px; font-size: 24px; animation: fall linear infinite; opacity: 0.85; pointer-events: none; z-index: 1; }
 @keyframes fall { to { transform: translateY(110vh); } }
+
 .flying { position: fixed; width: 150px; height: auto; pointer-events: none; z-index: 5; transform-origin: center center; }
 </style>
 </head>
 <body>
+
 <div class="container" id="container">
     <h1 id="question">Zuzia, zostaniesz moją walentynką? 💘</h1>
-    <div class="big-love" id="bigLove">KOCHAM CIĘ MINIO ❤️</div>
-    <div class="love-photo" id="lovePhotoContainer">
-        <img id="mainPhoto" src="nasze-zdjecie.jpg" alt="Nasze zdjęcie">
+
+    <!-- Drugi kontener – pokaże się po kliknięciu TAK -->
+    <div class="big-love-container" id="bigLoveContainer">
+        <div class="big-love" id="bigLove">KOCHAM CIĘ MINIO ❤️</div>
+        <div class="love-photo" id="lovePhotoContainer">
+            <img id="mainPhoto" src="nasze-zdjecie.jpg" alt="Nasze zdjęcie">
+        </div>
     </div>
+
     <div class="buttons" id="buttonsBox">
         <button id="yes">TAK</button>
         <button id="no">nie</button>
@@ -72,13 +123,12 @@ button {
 <script>
 const noButton = document.getElementById("no");
 const yesButton = document.getElementById("yes");
-const bigLove = document.getElementById("bigLove");
-const lovePhotoContainer = document.getElementById("lovePhotoContainer");
-const mainPhoto = document.getElementById("mainPhoto");
+const bigLoveContainer = document.getElementById("bigLoveContainer");
 const container = document.getElementById("container");
 const texts = ["nie", "no minio", "A zrób minkę :(", "chyba żart..."];
 let step = 0;
 
+// 🔹 Ruch przycisku "nie" w obrębie container
 function moveNo(e){
     const contRect = container.getBoundingClientRect();
     const btnRect = noButton.getBoundingClientRect();
@@ -92,16 +142,13 @@ function moveNo(e){
     const dist = Math.sqrt(dx*dx + dy*dy);
 
     if(dist < 120){
-        // ograniczenie ruchu
         const maxMove = 30;
         let moveX = (dx/dist) * Math.min(maxMove, 120-dist);
         let moveY = (dy/dist) * Math.min(maxMove, 120-dist);
 
-        // aktualna pozycja przycisku względem kontenera
         let currentLeft = btnRect.left - contRect.left;
         let currentTop = btnRect.top - contRect.top;
 
-        // nowa pozycja
         let newLeft = currentLeft + moveX;
         let newTop = currentTop + moveY;
 
@@ -112,11 +159,9 @@ function moveNo(e){
         noButton.style.left = newLeft + "px";
         noButton.style.top = newTop + "px";
 
-        // zmiana tekstu
         if(step < texts.length - 1) step++;
         noButton.textContent = texts[step];
 
-        // lekki obrót
         const angle = (Math.random()*20 - 10);
         noButton.style.transform = `rotate(${angle}deg)`;
         setTimeout(()=>{ noButton.style.transform = `rotate(0deg)`; }, 200);
@@ -128,8 +173,8 @@ noButton.addEventListener("mousemove", moveNo);
 yesButton.addEventListener("click", () => {
     document.getElementById("question").style.display = "none";
     document.getElementById("buttonsBox").style.display = "none";
-    bigLove.style.display = "block"; bigLove.classList.add("pulse");
-    lovePhotoContainer.style.display = "flex"; mainPhoto.style.display = "block";
+    bigLoveContainer.style.display = "flex";
+    bigLoveContainer.classList.add("pulse");
 
     const audio = document.getElementById("loveSound");
     if(audio) audio.play();
