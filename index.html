@@ -2,6 +2,7 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Walentynka ❤️</title>
 
 <style>
@@ -16,9 +17,10 @@ body{
   overflow:hidden;
 }
 
+/* BIAŁY BOX (przeszkoda dla PNG) */
 .container{
-  width:750px;
-  height:520px;
+  width:min(750px, 92vw);
+  height:min(520px, 86vh);
   background:white;
   border-radius:30px;
   padding:30px;
@@ -31,9 +33,10 @@ body{
 
 h1{ color:#c2185b; margin-bottom:30px; }
 
+/* Pole przycisków (w obrębie białego boxa) */
 .buttons{
-  width:360px;
-  height:220px;
+  width:min(420px, 90%);
+  height:240px;
   margin:0 auto;
   position:relative;
 }
@@ -45,7 +48,9 @@ button{
   border:none;
   border-radius:30px;
   cursor:pointer;
-  white-space:nowrap;
+  white-space:nowrap;          /* ✅ tekst nie łamie się */
+  width:fit-content;           /* ✅ ramka dopasowuje się do tekstu */
+  max-width:100%;              /* awaryjnie, gdyby ktoś wpisał mega długi tekst */
   z-index:4;
   transition:left 0.25s ease, top 0.25s ease;
 }
@@ -129,7 +134,15 @@ setInterval(createHeart,350);
 /* 🙅 PRZYCISK NIE – płynne uciekanie + cooldown tekstu */
 const noBtn=document.getElementById("no");
 const box=document.getElementById("buttonsBox");
-const texts=["nie","serio?","ej 😳","no weź","💔"];
+
+/* ✅ Kolejność napisów po "nie" + czerwona zła emotka 😡 */
+const texts = [
+  "nie",
+  "no minio...",
+  "chyba żartujesz...",
+  "głupi zasrak 😡"
+];
+
 let textIndex=0, lastChange=0;
 
 noBtn.addEventListener("mousemove",(e)=>{
@@ -148,13 +161,18 @@ noBtn.addEventListener("mousemove",(e)=>{
     let left=(btnRect.left-boxRect.left)+Math.cos(angle)*move;
     let top =(btnRect.top -boxRect.top )+Math.sin(angle)*move;
 
-    left=Math.max(0,Math.min(box.clientWidth-btnRect.width,left));
-    top =Math.max(0,Math.min(box.clientHeight-btnRect.height,top));
+    /* ✅ zawsze liczymy realny rozmiar przycisku (bo tekst się zmienia) */
+    const bw = noBtn.offsetWidth;
+    const bh = noBtn.offsetHeight;
+
+    left=Math.max(0,Math.min(box.clientWidth-bw,left));
+    top =Math.max(0,Math.min(box.clientHeight-bh,top));
 
     noBtn.style.left=left+"px";
     noBtn.style.top =top +"px";
 
-    if(now-lastChange>600 && textIndex<texts.length-1){
+    /* ✅ odstęp czasu, żeby napisy nie przeskakiwały od razu */
+    if(now-lastChange>650 && textIndex<texts.length-1){
       textIndex++;
       noBtn.textContent=texts[textIndex];
       lastChange=now;
@@ -180,7 +198,7 @@ function startFlyingPNG(){
   const pngs = [];
   const count = 12;     // ✅ więcej PNG
   const size  = 180;    // musi pasować do .flying width
-  const EPS   = 3;      // odskok od przeszkody, żeby nie łapało kolizji co klatkę
+  const EPS   = 3;      // odskok od przeszkody
   const BOX_COOLDOWN_FRAMES = 8;
 
   function randSpeed(){
@@ -230,7 +248,7 @@ function startFlyingPNG(){
     p.boxCd = BOX_COOLDOWN_FRAMES;
   }
 
-  // START: losowo na ekranie, ale NIE w boxie
+  // Start: losowo na ekranie, ale NIE w białym boxie
   const boxRect0 = container.getBoundingClientRect();
   for (let i=0; i<count; i++){
     const img = document.createElement("img");
@@ -269,7 +287,7 @@ function startFlyingPNG(){
         p.y = window.innerHeight - size; p.vy = -Math.abs(p.vy); kick(p);
       }
 
-      // kolizja z boxem (przeszkodą) — z cooldownem i wypchnięciem
+      // kolizja z białym boxem (przeszkoda) — wypchnięcie + cooldown
       if (p.boxCd === 0 && intersectsBox(p.x, p.y, size, boxRect)){
         resolveAgainstBox(p, boxRect);
       }
