@@ -40,7 +40,7 @@ button { font-size: 22px; padding: 15px 25px; border: none; border-radius: 40px;
 .pulse { animation: pulse 0.6s ease infinite; }
 .heart { position: fixed; top: -30px; font-size: 24px; animation: fall linear infinite; opacity: 0.85; pointer-events: none; z-index: 1; }
 @keyframes fall { to { transform: translateY(110vh); } }
-.flying { position: fixed; width: 80px; height: auto; pointer-events: none; z-index: 5; transform-origin: center center; }
+.flying { position: fixed; width: 150px; height: auto; pointer-events: none; z-index: 5; transform-origin: center center; }
 </style>
 </head>
 <body>
@@ -107,7 +107,7 @@ function createHeart(){const heart=document.createElement("div");heart.className
 setInterval(createHeart,350);
 function createConfetti(){const confetti=document.createElement("div");confetti.style.position="fixed";confetti.style.width="8px";confetti.style.height="8px";confetti.style.backgroundColor=["#ff5c8a","#e91e63","#f06292","#ff4081"][Math.floor(Math.random()*4)];confetti.style.left=Math.random()*100+"vw";confetti.style.top="-10px";confetti.style.borderRadius="50%";confetti.style.zIndex=3;confetti.style.opacity=0.8;confetti.style.transition="all 3s linear";document.body.appendChild(confetti);setTimeout(()=>{confetti.style.top="110vh"; confetti.style.transform=`rotate(${Math.random()*360}deg)`;},10);setTimeout(()=>confetti.remove(),3100);}
 
-// Boczne PNG typu DVD z poprawionym wczytywaniem i fallbackiem
+// Boczne PNG typu DVD – teraz 5 jednocześnie
 function startFlyingPNG(){
     const screenW=window.innerWidth;
     const screenH=window.innerHeight;
@@ -115,33 +115,31 @@ function startFlyingPNG(){
     function createPNG(xStart, yStart, vx, vy){
         const img=document.createElement("img");
         img.className="flying";
-        // 🔹 NOWA ŚCIEŻKA: ./ oznacza ten sam folder co HTML
-        img.src="./meme1.png";
-        // 🔹 Fallback: jeśli PNG nie wczyta się, pokaż serduszko
-        img.onerror = ()=>{ img.src="https://via.placeholder.com/80x80.png?text=❤️"; };
+        img.src="./meme1.png"; // musi być w tym samym folderze
+        img.onerror = ()=>{ img.src="https://via.placeholder.com/150x150.png?text=❤️"; };
         document.body.appendChild(img);
         return {el:img, x:xStart, y:yStart, vx:vx, vy:vy, angle:Math.random()*360, vang:(Math.random()*4-2), scale:1, scaleDir:1};
     }
 
-    const pngs=[
-        createPNG(0, Math.random()*(screenH-80), 3, 2),
-        createPNG(screenW-80, Math.random()*(screenH-80), -3, 2)
-    ];
+    const pngs = [];
+    const speeds = [3,2.5,3.5,2.8,3.2]; // różne prędkości
+    for(let i=0;i<5;i++){
+        const side = i%2===0 ? 0 : screenW-150;
+        pngs.push(createPNG(side, Math.random()*(screenH-150), side===0 ? speeds[i] : -speeds[i], speeds[i]));
+    }
 
     function animate(){
         pngs.forEach(p=>{
             p.x+=p.vx; p.y+=p.vy;
             p.angle+=p.vang;
             p.scale+=0.01*p.scaleDir;
-            if(p.scale>1.2||p.scale<0.8) p.scaleDir*=-1;
+            if(p.scale>1.5||p.scale<0.9) p.scaleDir*=-1;
 
-            // odbicie od krawędzi ekranu z lekkim przyspieszeniem
-            if(p.x<=0||p.x>=screenW-80){ p.vx*=-1; p.vx+=Math.sign(p.vx)*0.2; }
-            if(p.y<=0||p.y>=screenH-80){ p.vy*=-1; p.vy+=Math.sign(p.vy)*0.2; }
+            if(p.x<=0||p.x>=screenW-150){ p.vx*=-1; p.vx+=Math.sign(p.vx)*0.2; }
+            if(p.y<=0||p.y>=screenH-150){ p.vy*=-1; p.vy+=Math.sign(p.vy)*0.2; }
 
-            // odbicie od kontenera
             const c=container.getBoundingClientRect();
-            if(p.x+80>c.left && p.x<c.right && p.y+80>c.top && p.y<c.bottom){
+            if(p.x+150>c.left && p.x<c.right && p.y+150>c.top && p.y<c.bottom){
                 p.vx*=-1; p.vy*=-1;
                 p.vx+=Math.random()*0.5-0.25;
                 p.vy+=Math.random()*0.5-0.25;
