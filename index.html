@@ -16,13 +16,13 @@ body{
     overflow:hidden;
 }
 
-/* GŁÓWNY BOX – JEDYNY OBSZAR */
+/* JEDEN GŁÓWNY BOX */
 .container{
-    width:700px;
-    height:500px;
+    width:750px;
+    height:520px;
     background:white;
     border-radius:30px;
-    padding:25px;
+    padding:30px;
     box-sizing:border-box;
     text-align:center;
     position:relative;
@@ -32,24 +32,21 @@ body{
 
 h1{
     color:#c2185b;
-    margin-bottom:20px;
+    margin-bottom:30px;
 }
 
-/* OBSZAR PRZYCISKÓW (TEN SAM BOX) */
+/* OBSZAR PRZYCISKÓW – BEZ OBRAMÓWKI */
 .buttons{
     width:360px;
     height:220px;
     margin:0 auto;
-    border-radius:25px;
     position:relative;
-    overflow:hidden;
-    border:2px solid #eee;
 }
 
 /* PRZYCISKI */
 button{
     position:absolute;
-    padding:12px 24px;
+    padding:12px 26px;
     font-size:20px;
     border:none;
     border-radius:30px;
@@ -75,7 +72,12 @@ button{
 /* BOX PO TAK */
 .love-box{
     display:none;
-    margin-top:20px;
+    margin-top:10px;
+}
+
+.love-box h2{
+    color:#e91e63;
+    margin-bottom:15px;
 }
 
 .love-box img{
@@ -88,6 +90,7 @@ button{
     position:absolute;
     width:120px;
     pointer-events:none;
+    z-index:1;
 }
 </style>
 </head>
@@ -104,7 +107,7 @@ button{
     </div>
 
     <div class="love-box" id="loveBox">
-        <h2>KOCHAM CIĘ ❤️</h2>
+        <h2>Kocham Cię minio ❤️</h2>
         <img src="nasze-zdjecie.jpg">
     </div>
 
@@ -121,16 +124,13 @@ const container = document.getElementById("container");
 const texts = ["nie","serio?","ej 😳","no weź","💔"];
 let step = 0;
 
-/* UCIEKANIE "NIE" – TYLKO W BOXIE */
+/* UCIEKANIE "NIE" – W GRANICACH CONTAINERA */
 noBtn.addEventListener("mouseenter", ()=>{
     const maxX = box.clientWidth - noBtn.offsetWidth;
     const maxY = box.clientHeight - noBtn.offsetHeight;
 
-    const left = Math.random() * maxX;
-    const top  = Math.random() * maxY;
-
-    noBtn.style.left = left + "px";
-    noBtn.style.top  = top  + "px";
+    noBtn.style.left = Math.random()*maxX + "px";
+    noBtn.style.top  = Math.random()*maxY + "px";
 
     if(step < texts.length-1) step++;
     noBtn.textContent = texts[step];
@@ -144,10 +144,10 @@ yesBtn.addEventListener("click", ()=>{
     startFlyingPNG();
 });
 
-/* PNG ODBIJAJĄCE SIĘ OD BOXA */
+/* PNG STARTUJĄ Z BOKÓW STRONY I ODBIJAJĄ SIĘ OD BOXA */
 function startFlyingPNG(){
     const pngs=[];
-    const count=3;
+    const count=4;
 
     for(let i=0;i<count;i++){
         const img=document.createElement("img");
@@ -155,12 +155,14 @@ function startFlyingPNG(){
         img.className="flying";
         container.appendChild(img);
 
+        const startLeft = i%2===0 ? -140 : container.clientWidth + 20;
+
         pngs.push({
             el:img,
-            x:Math.random()*(container.clientWidth-120),
-            y:Math.random()*(container.clientHeight-120),
-            vx:(Math.random()*3+2)*(Math.random()<0.5?-1:1),
-            vy:(Math.random()*3+2)*(Math.random()<0.5?-1:1)
+            x:startLeft,
+            y:Math.random()*(container.clientHeight-140),
+            vx:i%2===0 ? 3 : -3,
+            vy:(Math.random()*2+2)*(Math.random()<0.5?-1:1)
         });
     }
 
