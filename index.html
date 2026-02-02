@@ -2,8 +2,8 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Walentynka 💕</title>
+
 <style>
 body {
     margin: 0;
@@ -16,250 +16,165 @@ body {
     overflow: hidden;
 }
 
-/* Duży kontener – obszar przycisku "nie" */
+/* GŁÓWNY DUŻY KONTENER */
 .container {
-    width: 95%;
-    max-width: 600px;
-    height: 90vh;
+    width: 700px;
+    height: 500px;
     background: linear-gradient(135deg, #fff0f5, #ffe4e1);
-    padding: 40px 30px;
     border-radius: 30px;
-    text-align: center;
+    padding: 30px;
+    box-sizing: border-box;
     position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
+    text-align: center;
 }
 
-/* Napis */
+/* PYTANIE */
 h1 {
-    font-size: 28px;
     color: #c2185b;
-    margin-bottom: 30px;
+    margin-bottom: 25px;
 }
 
-/* Drugi kontener – pokazuje się po kliknięciu TAK */
-.big-love-container {
-    display: none;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
-    background: #fff0f5;
+/* 📦 PUDEŁKO NA PRZYCISKI */
+.buttons-box {
+    width: 350px;
+    height: 220px;
+    background: white;
     border-radius: 25px;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden; /* 🔥 NIC NIE WYJDZIE POZA */
     box-shadow: 0 10px 25px rgba(0,0,0,0.15);
 }
 
-/* Napis w drugim kontenerze */
-.big-love {
-    font-size: 42px;
+/* PRZYCISKI */
+button {
+    position: absolute;
+    font-size: 20px;
+    padding: 12px 24px;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+}
+
+#yes {
+    background: #ff5c8a;
+    color: white;
+    left: 50%;
+    top: 40px;
+    transform: translateX(-50%);
+}
+
+#no {
+    background: #ddd;
+    left: 50%;
+    top: 120px;
+    transform: translateX(-50%);
+}
+
+/* DRUGI KONTENER PO TAK */
+.love-box {
+    display: none;
+    background: white;
+    border-radius: 25px;
+    padding: 20px;
+    width: fit-content;
+    margin: 30px auto 0;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.love-box h2 {
     color: #e91e63;
-    font-weight: bold;
     margin-bottom: 15px;
 }
 
-/* Zdjęcie w drugim kontenerze */
-.love-photo img {
+.love-box img {
+    max-width: 250px;
     border-radius: 20px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
-    max-width: 100%;
-    height: auto;
 }
 
-/* Obszar przycisków */
-.buttons {
-    position: relative;
-    width: 100%;
-    height: 250px;
-    margin-top: 20px;
-}
-
-/* Przyciski */
-button {
+/* SERDUSZKA */
+.heart {
+    position: fixed;
+    top: -20px;
     font-size: 22px;
-    padding: 15px 25px;
-    border: none;
-    border-radius: 40px;
-    display: block;
-    min-width: 100px;
-    cursor: pointer;
-    position: absolute;
+    animation: fall linear infinite;
+    pointer-events: none;
 }
-#yes { background-color: #ff5c8a; color: white; left:50%; transform:translateX(-50%);}
-#no { background-color: #ddd; color: black; left:50%; top:80px;}
-
-/* Animacje */
-@keyframes pulse {0%{transform:scale(1);}50%{transform:scale(1.2);}100%{transform:scale(1);} }
-.pulse { animation: pulse 0.6s ease infinite; }
-
-.heart { position: fixed; top: -30px; font-size: 24px; animation: fall linear infinite; opacity: 0.85; pointer-events: none; z-index: 1; }
-@keyframes fall { to { transform: translateY(110vh); } }
-
-.flying { position: fixed; width: 150px; height: auto; pointer-events: none; z-index: 5; transform-origin: center center; }
+@keyframes fall {
+    to { transform: translateY(110vh); }
+}
 </style>
 </head>
+
 <body>
 
-<div class="container" id="container">
+<div class="container">
+
     <h1 id="question">Zuzia, zostaniesz moją walentynką? 💘</h1>
 
-    <!-- Drugi kontener – pokaże się po kliknięciu TAK -->
-    <div class="big-love-container" id="bigLoveContainer">
-        <div class="big-love" id="bigLove">KOCHAM CIĘ MINIO ❤️</div>
-        <div class="love-photo" id="lovePhotoContainer">
-            <img id="mainPhoto" src="nasze-zdjecie.jpg" alt="Nasze zdjęcie">
-        </div>
-    </div>
-
-    <div class="buttons" id="buttonsBox">
+    <!-- 📦 PUDEŁKO -->
+    <div class="buttons-box" id="box">
         <button id="yes">TAK</button>
         <button id="no">nie</button>
     </div>
+
+    <!-- ❤️ DRUGI BOX -->
+    <div class="love-box" id="loveBox">
+        <h2>KOCHAM CIĘ MINIO ❤️</h2>
+        <img src="nasze-zdjecie.jpg" alt="Nasze zdjęcie">
+    </div>
+
 </div>
 
-<audio id="loveSound" src="love-sound.mp3"></audio>
-
 <script>
-const noButton = document.getElementById("no");
-const yesButton = document.getElementById("yes");
-const bigLoveContainer = document.getElementById("bigLoveContainer");
-const container = document.getElementById("container");
-const texts = ["nie", "no minio", "A zrób minkę :(", "chyba żart..."];
+const noBtn = document.getElementById("no");
+const yesBtn = document.getElementById("yes");
+const box = document.getElementById("box");
+const loveBox = document.getElementById("loveBox");
+const question = document.getElementById("question");
+
+const texts = ["nie", "serio?", "ej 😳", "no weź", "💔"];
 let step = 0;
 
-// 🔹 Ruch przycisku "nie" w obrębie container
-function moveNo(e){
-    const contRect = container.getBoundingClientRect();
-    const btnRect = noButton.getBoundingClientRect();
-    const mouseX = e.clientX;
-    const mouseY = e.clientY;
+// 🧠 INTELIGENTNE UCIEKANIE W OBRĘBIE PUDEŁKA
+noBtn.addEventListener("mousemove", (e) => {
+    const boxRect = box.getBoundingClientRect();
+    const btnRect = noBtn.getBoundingClientRect();
 
-    const centerX = btnRect.left + btnRect.width/2;
-    const centerY = btnRect.top + btnRect.height/2;
-    const dx = centerX - mouseX;
-    const dy = centerY - mouseY;
-    const dist = Math.sqrt(dx*dx + dy*dy);
+    const maxMove = 35;
 
-    if(dist < 120){
-        const maxMove = 30;
-        let moveX = (dx/dist) * Math.min(maxMove, 120-dist);
-        let moveY = (dy/dist) * Math.min(maxMove, 120-dist);
+    let newLeft = btnRect.left - boxRect.left + (Math.random() * maxMove * 2 - maxMove);
+    let newTop  = btnRect.top  - boxRect.top  + (Math.random() * maxMove * 2 - maxMove);
 
-        let currentLeft = btnRect.left - contRect.left;
-        let currentTop = btnRect.top - contRect.top;
+    newLeft = Math.max(0, Math.min(boxRect.width - btnRect.width, newLeft));
+    newTop  = Math.max(0, Math.min(boxRect.height - btnRect.height, newTop));
 
-        let newLeft = currentLeft + moveX;
-        let newTop = currentTop + moveY;
+    noBtn.style.left = newLeft + "px";
+    noBtn.style.top = newTop + "px";
 
-        // ograniczenie do kontenera
-        newLeft = Math.max(0, Math.min(contRect.width - btnRect.width, newLeft));
-        newTop = Math.max(0, Math.min(contRect.height - btnRect.height, newTop));
-
-        noButton.style.left = newLeft + "px";
-        noButton.style.top = newTop + "px";
-
-        if(step < texts.length - 1) step++;
-        noButton.textContent = texts[step];
-
-        const angle = (Math.random()*20 - 10);
-        noButton.style.transform = `rotate(${angle}deg)`;
-        setTimeout(()=>{ noButton.style.transform = `rotate(0deg)`; }, 200);
-    }
-}
-noButton.addEventListener("mousemove", moveNo);
-
-// Kliknięcie TAK
-yesButton.addEventListener("click", () => {
-    document.getElementById("question").style.display = "none";
-    document.getElementById("buttonsBox").style.display = "none";
-    bigLoveContainer.style.display = "flex";
-    bigLoveContainer.classList.add("pulse");
-
-    const audio = document.getElementById("loveSound");
-    if(audio) audio.play();
-    for(let i=0;i<50;i++) createConfetti();
-    startFlyingPNG();
+    if (step < texts.length - 1) step++;
+    noBtn.textContent = texts[step];
 });
 
-// Serduszka i konfetti
-function createHeart(){
-    const heart=document.createElement("div");
-    heart.className="heart";
-    heart.innerText="❤️";
-    const colors=["#ff5c8a","#e91e63","#ff4081","#f06292"];
-    heart.style.color=colors[Math.floor(Math.random()*colors.length)];
-    heart.style.left=Math.random()*100+"vw";
-    heart.style.fontSize=(18+Math.random()*20)+"px";
-    heart.style.animationDuration=(3+Math.random()*4)+"s";
-    document.body.appendChild(heart);
-    setTimeout(()=>heart.remove(),7000);
+// ✅ TAK
+yesBtn.addEventListener("click", () => {
+    box.style.display = "none";
+    question.style.display = "none";
+    loveBox.style.display = "block";
+});
+
+// ❤️ SERDUSZKA
+function createHeart() {
+    const h = document.createElement("div");
+    h.className = "heart";
+    h.textContent = "❤️";
+    h.style.left = Math.random() * 100 + "vw";
+    h.style.animationDuration = 3 + Math.random() * 4 + "s";
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), 7000);
 }
-setInterval(createHeart,350);
-
-function createConfetti(){
-    const confetti=document.createElement("div");
-    confetti.style.position="fixed";
-    confetti.style.width="8px";
-    confetti.style.height="8px";
-    confetti.style.backgroundColor=["#ff5c8a","#e91e63","#f06292","#ff4081"][Math.floor(Math.random()*4)];
-    confetti.style.left=Math.random()*100+"vw";
-    confetti.style.top="-10px";
-    confetti.style.borderRadius="50%";
-    confetti.style.zIndex=3;
-    confetti.style.opacity=0.8;
-    confetti.style.transition="all 3s linear";
-    document.body.appendChild(confetti);
-    setTimeout(()=>{
-        confetti.style.top="110vh";
-        confetti.style.transform=`rotate(${Math.random()*360}deg)`;
-    },10);
-    setTimeout(()=>confetti.remove(),3100);
-}
-
-// Boczne latające PNG
-function startFlyingPNG(){
-    const screenW=window.innerWidth;
-    const screenH=window.innerHeight;
-
-    function createPNG(xStart, yStart, vx, vy){
-        const img=document.createElement("img");
-        img.className="flying";
-        img.src="./meme1.png";
-        img.onerror = ()=>{ img.src="https://via.placeholder.com/150x150.png?text=❤️"; };
-        document.body.appendChild(img);
-        return {el:img, x:xStart, y:yStart, vx:vx, vy:vy, angle:Math.random()*360, vang:(Math.random()*4-2), scale:1, scaleDir:1};
-    }
-
-    const pngs = [];
-    const speeds = [3,2.5,3.5,2.8,3.2];
-    for(let i=0;i<5;i++){
-        const side = i%2===0 ? 0 : screenW-150;
-        pngs.push(createPNG(side, Math.random()*(screenH-150), side===0 ? speeds[i] : -speeds[i], speeds[i]));
-    }
-
-    function animate(){
-        pngs.forEach(p=>{
-            p.x+=p.vx; p.y+=p.vy;
-            p.angle+=p.vang;
-            p.scale+=0.01*p.scaleDir;
-            if(p.scale>1.5||p.scale<0.9) p.scaleDir*=-1;
-
-            const c=document.querySelector(".container").getBoundingClientRect();
-            if(p.x+150>c.left && p.x<c.right && p.y+150>c.top && p.y<c.bottom){
-                p.vx*=-1; p.vy*=-1;
-                p.vx+=Math.random()*0.5-0.25;
-                p.vy+=Math.random()*0.5-0.25;
-            }
-
-            p.el.style.left=p.x+"px";
-            p.el.style.top=p.y+"px";
-            p.el.style.transform=`rotate(${p.angle}deg) scale(${p.scale})`;
-        });
-        requestAnimationFrame(animate);
-    }
-    animate();
-}
+setInterval(createHeart, 400);
 </script>
+
 </body>
 </html>
