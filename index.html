@@ -1,151 +1,170 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <title>Walentynka 💕</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Walentynka 💕</title>
 
-    <style>
-        body {
-            margin: 0;
-            height: 100vh;
-            background-color: #f6c1d1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: Arial, sans-serif;
-            overflow: hidden;
-        }
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    background-color: #f6c1d1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    overflow: hidden;
+}
 
-        .container {
-            background: rgba(255, 255, 255, 0.92);
-            padding: 50px 70px;
-            border-radius: 30px;
-            text-align: center;
-            position: relative;
-            z-index: 2;
-        }
+.container {
+    width: 90%;
+    max-width: 450px;
+    background: rgba(255,255,255,0.95);
+    padding: 30px 20px;
+    border-radius: 30px;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
 
-        h1 {
-            font-size: 32px;
-            color: #c2185b;
-            margin-bottom: 40px;
-        }
+h1 {
+    font-size: 24px;
+    color: #c2185b;
+    margin-bottom: 30px;
+}
 
-        .buttons {
-            position: relative;
-            height: 150px;
-        }
+.big-love {
+    display: none;
+    font-size: 42px;
+    color: #e91e63;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
 
-        button {
-            font-size: 22px;
-            padding: 14px 40px;
-            border: none;
-            border-radius: 40px;
-            cursor: pointer;
-            margin: 10px;
-        }
+.love-photo {
+    display: none;
+}
 
-        #yes {
-            background-color: #ff5c8a;
-            color: white;
-        }
+.love-photo img {
+    width: 100%;
+    border-radius: 25px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+}
 
-        #no {
-            background-color: #ddd;
-            color: black;
-            position: absolute;
-            left: 50%;
-            top: 80px;
-            transform: translateX(-50%);
-        }
+.buttons {
+    position: relative;
+    height: 180px;
+}
 
-        #loveImage {
-            display: none;
-            margin-top: 30px;
-        }
+button {
+    width: 80%;
+    max-width: 260px;
+    font-size: 22px;
+    padding: 15px;
+    border: none;
+    border-radius: 40px;
+    margin: 10px auto;
+    display: block;
+    transition: all 0.15s ease;
+}
 
-        #loveImage img {
-            width: 260px;
-            border-radius: 20px;
-        }
+#yes {
+    background-color: #ff5c8a;
+    color: white;
+}
 
-        .heart {
-            position: fixed;
-            top: -30px;
-            font-size: 26px;
-            animation: fall linear infinite;
-            opacity: 0.8;
-            pointer-events: none;
-            z-index: 1;
-        }
+#no {
+    background-color: #ddd;
+    color: black;
+    position: absolute;
+    left: 50%;
+    top: 100px;
+    transform: translateX(-50%);
+}
 
-        @keyframes fall {
-            to {
-                transform: translateY(110vh);
-            }
-        }
-    </style>
+/* serca */
+.heart {
+    position: fixed;
+    top: -30px;
+    font-size: 24px;
+    animation: fall linear infinite;
+    opacity: 0.85;
+    pointer-events: none;
+    z-index: 1;
+}
+
+@keyframes fall {
+    to { transform: translateY(110vh); }
+}
+</style>
 </head>
+
 <body>
 
 <div class="container">
-    <h1>Zuzia, zostaniesz moją walentynką? 💘</h1>
+
+    <h1 id="question">Zuzia, zostaniesz moją walentynką? 💘</h1>
+
+    <div class="big-love" id="bigLove">
+        KOCHAM CIĘ MINIO ❤️
+    </div>
+
+    <div class="love-photo" id="lovePhoto">
+        <img src="nasze-zdjecie.jpg" alt="Nasze zdjęcie">
+    </div>
 
     <div class="buttons" id="buttonsBox">
         <button id="yes">TAK</button>
         <button id="no">nie</button>
     </div>
 
-    <div id="loveImage">
-        <h2>Wiedziałem! 😍❤️</h2>
-        <img src="https://i.imgur.com/6XKpB6n.png" alt="Słodki obrazek">
-    </div>
 </div>
 
 <script>
-    const noButton = document.getElementById("no");
-    const yesButton = document.getElementById("yes");
-    const loveImage = document.getElementById("loveImage");
-    const buttonsBox = document.getElementById("buttonsBox");
+const noButton = document.getElementById("no");
+const yesButton = document.getElementById("yes");
+const buttonsBox = document.getElementById("buttonsBox");
 
-    function moveNoButton() {
-        const box = buttonsBox.getBoundingClientRect();
+function moveNo() {
+    const box = buttonsBox.getBoundingClientRect();
+    noButton.style.left = Math.random() * (box.width - noButton.offsetWidth) + "px";
+    noButton.style.top = Math.random() * (box.height - noButton.offsetHeight) + "px";
+}
 
-        const maxX = box.width - noButton.offsetWidth;
-        const maxY = box.height - noButton.offsetHeight;
+/* PC */
+noButton.addEventListener("mouseenter", moveNo);
 
-        const x = Math.random() * maxX;
-        const y = Math.random() * maxY;
-
-        noButton.style.left = x + "px";
-        noButton.style.top = y + "px";
-        noButton.style.transform = "none";
+/* MOBILE */
+buttonsBox.addEventListener("touchstart", e => {
+    if (e.target.id === "no") {
+        moveNo();
+        e.preventDefault();
     }
+});
 
-    // Ucieka od kursora
-    noButton.addEventListener("mouseenter", moveNoButton);
-    noButton.addEventListener("mouseover", moveNoButton);
+yesButton.addEventListener("click", () => {
+    if (navigator.vibrate) navigator.vibrate([200,100,200,100,400]);
 
-    yesButton.addEventListener("click", () => {
-        loveImage.style.display = "block";
-        yesButton.style.display = "none";
-        noButton.style.display = "none";
-    });
+    document.getElementById("question").style.display = "none";
+    document.getElementById("buttonsBox").style.display = "none";
 
-    function createHeart() {
-        const heart = document.createElement("div");
-        heart.className = "heart";
-        heart.innerText = "❤️";
+    document.getElementById("bigLove").style.display = "block";
+    document.getElementById("lovePhoto").style.display = "block";
+});
 
-        heart.style.left = Math.random() * 100 + "vw";
-        heart.style.fontSize = (18 + Math.random() * 20) + "px";
-        heart.style.animationDuration = (3 + Math.random() * 4) + "s";
-
-        document.body.appendChild(heart);
-        setTimeout(() => heart.remove(), 7000);
-    }
-
-    setInterval(createHeart, 300);
+/* serduszka */
+function createHeart() {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerText = "❤️";
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.fontSize = (18 + Math.random() * 20) + "px";
+    heart.style.animationDuration = (3 + Math.random() * 4) + "s";
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 7000);
+}
+setInterval(createHeart, 350);
 </script>
 
 </body>
