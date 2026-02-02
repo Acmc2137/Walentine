@@ -16,7 +16,7 @@ body {
     overflow: hidden;
 }
 
-/* GŁÓWNY DUŻY KONTENER */
+/* GŁÓWNY KONTENER */
 .container {
     width: 700px;
     height: 500px;
@@ -24,25 +24,24 @@ body {
     border-radius: 30px;
     padding: 30px;
     box-sizing: border-box;
-    position: relative;
     text-align: center;
 }
 
 /* PYTANIE */
 h1 {
     color: #c2185b;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
 
-/* 📦 PUDEŁKO NA PRZYCISKI */
-.buttons-box {
-    width: 350px;
-    height: 220px;
+/* ⬜ ISTNIEJĄCY BOX */
+.buttons {
+    width: 380px;
+    height: 230px;
     background: white;
     border-radius: 25px;
     margin: 0 auto;
     position: relative;
-    overflow: hidden; /* 🔥 NIC NIE WYJDZIE POZA */
+    overflow: hidden; /* NIC NIE WYJDZIE */
     box-shadow: 0 10px 25px rgba(0,0,0,0.15);
 }
 
@@ -54,6 +53,7 @@ button {
     border-radius: 30px;
     border: none;
     cursor: pointer;
+    white-space: nowrap; /* 🔥 TEKST NIGDY SIĘ NIE ZŁAMIE */
 }
 
 #yes {
@@ -71,7 +71,7 @@ button {
     transform: translateX(-50%);
 }
 
-/* DRUGI KONTENER PO TAK */
+/* PO TAK */
 .love-box {
     display: none;
     background: white;
@@ -92,7 +92,7 @@ button {
     border-radius: 20px;
 }
 
-/* SERDUSZKA */
+/* SERCA */
 .heart {
     position: fixed;
     top: -20px;
@@ -112,13 +112,12 @@ button {
 
     <h1 id="question">Zuzia, zostaniesz moją walentynką? 💘</h1>
 
-    <!-- 📦 PUDEŁKO -->
-    <div class="buttons-box" id="box">
+    <!-- TEN SAM BOX -->
+    <div class="buttons" id="buttonsBox">
         <button id="yes">TAK</button>
         <button id="no">nie</button>
     </div>
 
-    <!-- ❤️ DRUGI BOX -->
     <div class="love-box" id="loveBox">
         <h2>KOCHAM CIĘ MINIO ❤️</h2>
         <img src="nasze-zdjecie.jpg" alt="Nasze zdjęcie">
@@ -129,41 +128,45 @@ button {
 <script>
 const noBtn = document.getElementById("no");
 const yesBtn = document.getElementById("yes");
-const box = document.getElementById("box");
+const box = document.getElementById("buttonsBox");
 const loveBox = document.getElementById("loveBox");
 const question = document.getElementById("question");
 
 const texts = ["nie", "serio?", "ej 😳", "no weź", "💔"];
 let step = 0;
 
-// 🧠 INTELIGENTNE UCIEKANIE W OBRĘBIE PUDEŁKA
-noBtn.addEventListener("mousemove", (e) => {
+/* 🧠 UCIEKANIE – ZAWSZE CAŁY PRZYCISK W ŚRODKU */
+noBtn.addEventListener("mousemove", () => {
     const boxRect = box.getBoundingClientRect();
-    const btnRect = noBtn.getBoundingClientRect();
 
-    const maxMove = 35;
+    // 🔥 AKTUALNY ROZMIAR PRZYCISKU (Z TEKSTEM)
+    const btnWidth = noBtn.offsetWidth;
+    const btnHeight = noBtn.offsetHeight;
 
-    let newLeft = btnRect.left - boxRect.left + (Math.random() * maxMove * 2 - maxMove);
-    let newTop  = btnRect.top  - boxRect.top  + (Math.random() * maxMove * 2 - maxMove);
+    const maxStep = 35;
 
-    newLeft = Math.max(0, Math.min(boxRect.width - btnRect.width, newLeft));
-    newTop  = Math.max(0, Math.min(boxRect.height - btnRect.height, newTop));
+    let left = noBtn.offsetLeft + (Math.random() * maxStep * 2 - maxStep);
+    let top  = noBtn.offsetTop  + (Math.random() * maxStep * 2 - maxStep);
 
-    noBtn.style.left = newLeft + "px";
-    noBtn.style.top = newTop + "px";
+    // 🔒 GRANICE – CAŁY PRZYCISK MUSI SIĘ ZMIEŚCIĆ
+    left = Math.max(0, Math.min(box.clientWidth  - btnWidth,  left));
+    top  = Math.max(0, Math.min(box.clientHeight - btnHeight, top));
+
+    noBtn.style.left = left + "px";
+    noBtn.style.top  = top  + "px";
 
     if (step < texts.length - 1) step++;
     noBtn.textContent = texts[step];
 });
 
-// ✅ TAK
+/* ✅ TAK */
 yesBtn.addEventListener("click", () => {
     box.style.display = "none";
     question.style.display = "none";
     loveBox.style.display = "block";
 });
 
-// ❤️ SERDUSZKA
+/* ❤️ SERDUSZKA */
 function createHeart() {
     const h = document.createElement("div");
     h.className = "heart";
